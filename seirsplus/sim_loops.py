@@ -1,9 +1,9 @@
 from __future__ import division
-import pickle
-import numpy
 
+import pickle
 import time
 
+import numpy
 
 
 def run_tti_sim(model, T, max_dt=None,

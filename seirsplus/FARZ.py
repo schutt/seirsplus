@@ -2,10 +2,11 @@
 # Adapted from https://github.com/rabbanyk/FARZ
 #################################################
 
-import random
 import bisect
 import math
 import os
+import random
+
 
 def random_choice(values, weights=None , size = 1, replace = True):
     if weights is None:
@@ -266,8 +267,9 @@ def realize(n, m,  k, b=0.0,  alpha=0.4, beta=0.5, gamma=0.1, phi=1, r=1, q = 0.
 
 
 def props():
-    import plotNets as pltn
     import matplotlib as mpl
+    import plotNets as pltn
+
     mpl.rcParams['axes.unicode_minus']=False
     graphs = []
     names = []
@@ -352,6 +354,8 @@ def generate( vari =None, arange =None, repeat = 1, path ='.', net_name = 'netwo
 
 
 import sys
+
+
 def main(argv):
     import getopt
     FARZsetting = default_FARZ_setting.copy()

@@ -1,5 +1,6 @@
-import numpy
 import matplotlib.pyplot as pyplot
+import numpy
+
 
 def gamma_dist(mean, coeffvar, N):
 	scale = mean*coeffvar**2

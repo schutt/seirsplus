@@ -1,13 +1,12 @@
 from __future__ import division
-import numpy
-import scipy
-import networkx
-from . import FARZ
-from .models import *
 
 import matplotlib.pyplot as pyplot
+import networkx
+import numpy
+import scipy
 
-
+from . import FARZ
+from .models import *
 
 
 def generate_workplace_contact_network(num_cohorts=1, num_nodes_per_cohort=100, num_teams_per_cohort=10,
