@@ -530,11 +530,11 @@ class SEIRSNetworkModel(BasePlotableModel):
             self.beta_global = self.beta
             self.beta_Q_global = self.beta_Q
         elif self.beta_pairwise_mode == "min":
-            self.beta_global = numpy.minimum(self.beta, numpy.mean(beta))
-            self.beta_Q_global = numpy.minimum(self.beta_Q, numpy.mean(beta_Q))
+            self.beta_global = numpy.minimum(self.beta, numpy.mean(self.beta))
+            self.beta_Q_global = numpy.minimum(self.beta_Q, numpy.mean(self.beta_Q))
         elif self.beta_pairwise_mode == "max":
-            self.beta_global = numpy.maximum(self.beta, numpy.mean(beta))
-            self.beta_Q_global = numpy.maximum(self.beta_Q, numpy.mean(beta_Q))
+            self.beta_global = numpy.maximum(self.beta, numpy.mean(self.beta))
+            self.beta_Q_global = numpy.maximum(self.beta_Q, numpy.mean(self.beta_Q))
         elif self.beta_pairwise_mode == "mean":
             self.beta_global = (
                 self.beta + numpy.full_like(self.beta, fill_value=numpy.mean(self.beta))
