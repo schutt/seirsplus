@@ -142,6 +142,11 @@ class SEIRSModel(BasePlotableModel):
         psi_I,
         q,
     ):
+        """
+        Define the system of differential equations.
+
+        This is the function supplied to the solver.
+        """
 
         (
             S,
@@ -190,6 +195,9 @@ class SEIRSModel(BasePlotableModel):
         return [dS, dE, dI, dDE, dDI, dR, dF]
 
     def run_epoch(self, runtime, dt=0.1):
+        """
+        Run an epoch (segment) of the simulation.
+        """
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Create a list of times at which the ODE solver should output system values.
@@ -257,6 +265,9 @@ class SEIRSModel(BasePlotableModel):
         self.t = self.tseries[-1]
 
     def run(self, T, dt=0.1, checkpoints=None, verbose=False):
+        """
+        Run a simulation for this model.
+        """
 
         if T > 0:
             self.tmax += T
