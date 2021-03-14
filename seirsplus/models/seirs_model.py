@@ -356,6 +356,7 @@ class SEIRSModel(BasePlotableModel):
                 + self.numQ_E[t_idx]
                 + self.numQ_I[t_idx]
             )
+
     def total_num_isolated(self, t_idx=None):
         if t_idx is None:
             return self.numQ_E[:] + self.numQ_I[:]

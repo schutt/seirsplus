@@ -1,4 +1,5 @@
 import matplotlib.pyplot as pyplot
+import networkx
 import numpy
 
 
@@ -60,7 +61,6 @@ def dist_info(
 def network_info(
     networks, names=None, plot=False, bin_size=1, colors=None, reverse_plot=False
 ):
-    import networkx
 
     networks = [networks] if not isinstance(networks, list) else networks
     names = [names] if not isinstance(names, list) else names

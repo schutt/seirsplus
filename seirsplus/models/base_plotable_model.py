@@ -1,6 +1,8 @@
 """Common model."""
 
+import matplotlib.pyplot as pyplot
 import numpy
+import seaborn
 
 
 class BasePlotableModel:
@@ -54,8 +56,6 @@ class BasePlotableModel:
         side_title=None,
         plot_percentages=True,
     ):
-
-        import matplotlib.pyplot as pyplot
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Create an Axes object if None provided:
@@ -598,12 +598,9 @@ class BasePlotableModel:
         show=True,
     ):
 
-        import matplotlib.pyplot as pyplot
-
         fig, ax = pyplot.subplots(figsize=figsize)
 
         if use_seaborn:
-            import seaborn
 
             seaborn.set_style("ticks")
             seaborn.despine()
@@ -684,12 +681,9 @@ class BasePlotableModel:
         show=True,
     ):
 
-        import matplotlib.pyplot as pyplot
-
         fig, ax = pyplot.subplots(figsize=figsize)
 
         if use_seaborn:
-            import seaborn
 
             seaborn.set_style("ticks")
             seaborn.despine()

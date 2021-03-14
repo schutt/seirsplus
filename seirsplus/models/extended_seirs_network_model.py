@@ -1,6 +1,8 @@
+import matplotlib.pyplot as pyplot
 import networkx
 import numpy
 import scipy
+import seaborn
 
 from .base_plotable_model import BasePlotableModel
 
@@ -2463,8 +2465,6 @@ class ExtSEIRSNetworkModel(BasePlotableModel):
         plot_percentages=True,
     ):
 
-        import matplotlib.pyplot as pyplot
-
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Create an Axes object if None provided:
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -3447,12 +3447,9 @@ class ExtSEIRSNetworkModel(BasePlotableModel):
         show=True,
     ):
 
-        import matplotlib.pyplot as pyplot
-
         fig, ax = pyplot.subplots(figsize=figsize)
 
         if use_seaborn:
-            import seaborn
 
             seaborn.set_style("ticks")
             seaborn.despine()
@@ -3563,12 +3560,9 @@ class ExtSEIRSNetworkModel(BasePlotableModel):
         show=True,
     ):
 
-        import matplotlib.pyplot as pyplot
-
         fig, ax = pyplot.subplots(figsize=figsize)
 
         if use_seaborn:
-            import seaborn
 
             seaborn.set_style("ticks")
             seaborn.despine()

@@ -2,6 +2,7 @@ import matplotlib.pyplot as pyplot
 import networkx
 import numpy
 import scipy
+import seaborn
 
 from . import FARZ
 from .models import *
@@ -1088,10 +1089,8 @@ def custom_exponential_graph(base_graph=None, scale=100, min_num_edges=0, m=9, n
 
 
 def plot_degree_distn(graph, max_degree=None, show=True, use_seaborn=True):
-    import matplotlib.pyplot as pyplot
 
     if use_seaborn:
-        import seaborn
 
         seaborn.set_style("ticks")
         seaborn.despine()

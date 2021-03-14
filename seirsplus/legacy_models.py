@@ -1,8 +1,11 @@
+import time
 
+import matplotlib.pyplot as pyplot
 import networkx as networkx
 import numpy as numpy
 import scipy as scipy
 import scipy.integrate
+import seaborn
 
 ########################################################
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@#
@@ -391,8 +394,6 @@ class SEIRSModel:
         side_title=None,
         plot_percentages=True,
     ):
-
-        import matplotlib.pyplot as pyplot
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Create an Axes object if None provided:
@@ -903,12 +904,9 @@ class SEIRSModel:
         show=True,
     ):
 
-        import matplotlib.pyplot as pyplot
-
         fig, ax = pyplot.subplots(figsize=figsize)
 
         if use_seaborn:
-            import seaborn
 
             seaborn.set_style("ticks")
             seaborn.despine()
@@ -989,12 +987,9 @@ class SEIRSModel:
         show=True,
     ):
 
-        import matplotlib.pyplot as pyplot
-
         fig, ax = pyplot.subplots(figsize=figsize)
 
         if use_seaborn:
-            import seaborn
 
             seaborn.set_style("ticks")
             seaborn.despine()
@@ -1294,7 +1289,6 @@ class SEIRSNetworkModel:
                 )
 
     def update_parameters(self):
-        import time
 
         updatestart = time.time()
 
@@ -2092,8 +2086,6 @@ class SEIRSNetworkModel:
         plot_percentages=True,
     ):
 
-        import matplotlib.pyplot as pyplot
-
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Create an Axes object if None provided:
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2603,12 +2595,9 @@ class SEIRSNetworkModel:
         show=True,
     ):
 
-        import matplotlib.pyplot as pyplot
-
         fig, ax = pyplot.subplots(figsize=figsize)
 
         if use_seaborn:
-            import seaborn
 
             seaborn.set_style("ticks")
             seaborn.despine()
@@ -2689,12 +2678,9 @@ class SEIRSNetworkModel:
         show=True,
     ):
 
-        import matplotlib.pyplot as pyplot
-
         fig, ax = pyplot.subplots(figsize=figsize)
 
         if use_seaborn:
-            import seaborn
 
             seaborn.set_style("ticks")
             seaborn.despine()
