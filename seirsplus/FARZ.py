@@ -110,15 +110,6 @@ class Graph:
 
         return
 
-    def to_nx(self):
-        import networkx as nx
-
-        G = nx.Graph()
-        for u, v, w in self.edge_list:
-            G.add_edge(u, v)
-            # G.add_edges_from(self.edge_list)
-        return G
-
     def to_nx(self, C):
         import networkx as nx
 
