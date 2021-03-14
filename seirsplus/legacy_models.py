@@ -1,4 +1,3 @@
-from __future__ import absolute_import, division, print_function
 
 import networkx as networkx
 import numpy as numpy
