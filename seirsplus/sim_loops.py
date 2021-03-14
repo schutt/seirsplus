@@ -822,7 +822,3 @@ def run_tti_sim(
     interventionInterval = (interventionStartTime, model.t)
 
     return interventionInterval
-
-
-#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -563,9 +563,6 @@ class BasePlotableModel:
 
         return ax
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     def figure_basic(
         self,
         plot_S="line",
@@ -651,9 +648,6 @@ class BasePlotableModel:
             pyplot.show()
 
         return fig, ax
-
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     def figure_infections(
         self,

@@ -113,10 +113,6 @@ def generate_workplace_contact_network(
     return workplaceNetwork, cohorts_indices, teams_indices
 
 
-# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
 def generate_demographic_contact_network(
     N,
     demographic_data,
@@ -1020,8 +1016,6 @@ def generate_demographic_contact_network(
             pyplot.legend(loc="upper right")
             pyplot.show()
 
-    #########################################
-
     return graphs, individualAgeBracketLabels, households
 
 
@@ -1061,10 +1055,6 @@ def household_country_data(country):
     return household_data
 
 
-#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Defines a random exponential edge pruning mechanism
 # where the mean degree be easily down-shifted
@@ -1097,10 +1087,6 @@ def custom_exponential_graph(base_graph=None, scale=100, min_num_edges=0, m=9, n
                     graph.remove_edge(node, neighbor)
 
     return graph
-
-
-# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
 def plot_degree_distn(graph, max_degree=None, show=True, use_seaborn=True):

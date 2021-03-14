@@ -302,9 +302,6 @@ class SEIRSNetworkModel(BasePlotableModel):
                 )
                 self.nodeGroupData[groupName]["N"][0] = self.numNodes - self.numF[0]
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     def update_parameters(self):
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -811,22 +808,14 @@ class SEIRSNetworkModel(BasePlotableModel):
             self.A_Q_delta_Q_pairwise, self.A_Q_beta_Q_pairwise
         )
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     def node_degrees(self, Amat):
         return Amat.sum(axis=0).reshape(self.numNodes, 1)  # sums of adj matrix cols
-
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     def total_num_susceptible(self, t_idx=None):
         if t_idx is None:
             return self.numS[:]
         else:
             return self.numS[t_idx]
-
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     def total_num_infected(self, t_idx=None):
         if t_idx is None:
@@ -839,15 +828,11 @@ class SEIRSNetworkModel(BasePlotableModel):
                 + self.numQ_I[t_idx]
             )
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     def total_num_isolated(self, t_idx=None):
         if t_idx is None:
             return self.numQ_E[:] + self.numQ_I[:]
         else:
             return self.numQ_E[t_idx] + self.numQ_I[t_idx]
-
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     def total_num_tested(self, t_idx=None):
         if t_idx is None:
@@ -855,24 +840,17 @@ class SEIRSNetworkModel(BasePlotableModel):
         else:
             return self.numTested[t_idx]
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     def total_num_positive(self, t_idx=None):
         if t_idx is None:
             return self.numPositive[:]
         else:
             return self.numPositive[t_idx]
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     def total_num_recovered(self, t_idx=None):
         if t_idx is None:
             return self.numR[:]
         else:
             return self.numR[t_idx]
-
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     def calc_propensities(self):
 
@@ -1060,9 +1038,6 @@ class SEIRSNetworkModel(BasePlotableModel):
 
         return propensities, columns
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     def set_isolation(self, node, isolate):
         # Move this node in/out of the appropriate isolation state:
         if isolate == True:
@@ -1082,18 +1057,12 @@ class SEIRSNetworkModel(BasePlotableModel):
         # Reset the isolation timer:
         self.timer_isolation[node] = 0
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     def set_tested(self, node, tested):
         self.tested[node] = tested
         self.testedInCurrentState[node] = tested
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     def set_positive(self, node, positive):
         self.positive[node] = positive
-
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     def introduce_exposures(self, num_new_exposures):
         exposedNodes = numpy.random.choice(
@@ -1102,9 +1071,6 @@ class SEIRSNetworkModel(BasePlotableModel):
         for exposedNode in exposedNodes:
             if self.X[exposedNode] == self.S:
                 self.X[exposedNode] = self.E
-
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     def increase_data_series_length(self):
         self.tseries = numpy.pad(
@@ -1217,8 +1183,6 @@ class SEIRSNetworkModel(BasePlotableModel):
 
         return None
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     def finalize_data_series(self):
         self.tseries = numpy.array(self.tseries, dtype=float)[: self.tidx + 1]
         self.numS = numpy.array(self.numS, dtype=float)[: self.tidx + 1]
@@ -1269,9 +1233,6 @@ class SEIRSNetworkModel(BasePlotableModel):
                 )[: self.tidx + 1]
 
         return None
-
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     def run_iteration(self):
 
@@ -1489,9 +1450,6 @@ class SEIRSNetworkModel(BasePlotableModel):
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         return True
-
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     def run(self, T, checkpoints=None, print_interval=10, verbose="t"):
         if T > 0:

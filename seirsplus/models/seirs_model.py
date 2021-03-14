@@ -123,9 +123,6 @@ class SEIRSModel(BasePlotableModel):
             self.numS[0] >= 0
         ), "The specified initial population size N must be greater than or equal to the initial compartment counts."
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     @staticmethod
     def system_dfes(
         t,
@@ -194,9 +191,6 @@ class SEIRSModel(BasePlotableModel):
 
         return [dS, dE, dI, dDE, dDI, dR, dF]
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     def run_epoch(self, runtime, dt=0.1):
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -263,9 +257,6 @@ class SEIRSModel(BasePlotableModel):
         self.numF = numpy.append(self.numF, solution["y"][6])
 
         self.t = self.tseries[-1]
-
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     def run(self, T, dt=0.1, checkpoints=None, verbose=False):
 
@@ -351,16 +342,11 @@ class SEIRSModel(BasePlotableModel):
 
         return True
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     def total_num_susceptible(self, t_idx=None):
         if t_idx is None:
             return self.numS[:]
         else:
             return self.numS[t_idx]
-
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     def total_num_infected(self, t_idx=None):
         if t_idx is None:
@@ -372,16 +358,11 @@ class SEIRSModel(BasePlotableModel):
                 + self.numQ_E[t_idx]
                 + self.numQ_I[t_idx]
             )
-
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     def total_num_isolated(self, t_idx=None):
         if t_idx is None:
             return self.numQ_E[:] + self.numQ_I[:]
         else:
             return self.numQ_E[t_idx] + self.numQ_I[t_idx]
-
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     def total_num_recovered(self, t_idx=None):
         if t_idx is None:

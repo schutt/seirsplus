@@ -466,9 +466,6 @@ class ExtSEIRSNetworkModel(BasePlotableModel):
                 )
                 self.nodeGroupData[groupName]["N"][0] = self.numNodes - self.numF[0]
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     def update_parameters(self):
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1209,22 +1206,14 @@ class ExtSEIRSNetworkModel(BasePlotableModel):
         else:
             self.A_deltabeta_asym = None
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     def node_degrees(self, Amat):
         return Amat.sum(axis=0).reshape(self.numNodes, 1)  # sums of adj matrix cols
-
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     def total_num_susceptible(self, t_idx=None):
         if t_idx is None:
             return self.numS[:] + self.numQ_S[:]
         else:
             return self.numS[t_idx] + self.numQ_S[t_idx]
-
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     def total_num_infected(self, t_idx=None):
         if t_idx is None:
@@ -1252,8 +1241,6 @@ class ExtSEIRSNetworkModel(BasePlotableModel):
                 + self.numQ_asym[t_idx]
             )
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     def total_num_isolated(self, t_idx=None):
         if t_idx is None:
             return (
@@ -1274,15 +1261,11 @@ class ExtSEIRSNetworkModel(BasePlotableModel):
                 + self.numQ_R[t_idx]
             )
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     def total_num_tested(self, t_idx=None):
         if t_idx is None:
             return self.numTested[:]
         else:
             return self.numTested[t_idx]
-
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     def total_num_positive(self, t_idx=None):
         if t_idx is None:
@@ -1290,16 +1273,11 @@ class ExtSEIRSNetworkModel(BasePlotableModel):
         else:
             return self.numPositive[t_idx]
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     def total_num_recovered(self, t_idx=None):
         if t_idx is None:
             return self.numR[:] + self.numQ_R[:]
         else:
             return self.numR[t_idx] + self.numQ_R[t_idx]
-
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     def calc_propensities(self):
 
@@ -1723,9 +1701,6 @@ class ExtSEIRSNetworkModel(BasePlotableModel):
 
         return propensities, columns
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     def set_isolation(self, node, isolate):
         # Move this node in/out of the appropriate isolation state:
         if isolate == True:
@@ -1757,18 +1732,12 @@ class ExtSEIRSNetworkModel(BasePlotableModel):
         # Reset the isolation timer:
         self.timer_isolation[node] = 0
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     def set_tested(self, node, tested):
         self.tested[node] = tested
         self.testedInCurrentState[node] = tested
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     def set_positive(self, node, positive):
         self.positive[node] = positive
-
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     def introduce_exposures(self, num_new_exposures):
         exposedNodes = numpy.random.choice(
@@ -1779,9 +1748,6 @@ class ExtSEIRSNetworkModel(BasePlotableModel):
                 self.X[exposedNode] = self.E
             elif self.X[exposedNode] == self.Q_S:
                 self.X[exposedNode] = self.Q_E
-
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     def increase_data_series_length(self):
         self.tseries = numpy.pad(
@@ -1957,8 +1923,6 @@ class ExtSEIRSNetworkModel(BasePlotableModel):
 
         return None
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     def finalize_data_series(self):
         self.tseries = numpy.array(self.tseries, dtype=float)[: self.tidx + 1]
         self.numS = numpy.array(self.numS, dtype=float)[: self.tidx + 1]
@@ -2034,9 +1998,6 @@ class ExtSEIRSNetworkModel(BasePlotableModel):
                 )[: self.tidx + 1]
 
         return None
-
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     def run_iteration(self, max_dt=None):
 
@@ -2354,9 +2315,6 @@ class ExtSEIRSNetworkModel(BasePlotableModel):
 
         return True
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     def run(
         self,
         T,
@@ -2456,9 +2414,6 @@ class ExtSEIRSNetworkModel(BasePlotableModel):
                     print_reset = True
 
         return True
-
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     def plot(
         self,
@@ -3442,9 +3397,6 @@ class ExtSEIRSNetworkModel(BasePlotableModel):
 
         return ax
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     def figure_basic(
         self,
         plot_S="line",
@@ -3560,9 +3512,6 @@ class ExtSEIRSNetworkModel(BasePlotableModel):
             pyplot.show()
 
         return fig, ax
-
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     def figure_infections(
         self,

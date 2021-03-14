@@ -128,9 +128,6 @@ class SEIRSModel:
             self.numS[0] >= 0
         ), "The specified initial population size N must be greater than or equal to the initial compartment counts."
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     @staticmethod
     def system_dfes(
         t,
@@ -199,9 +196,6 @@ class SEIRSModel:
 
         return [dS, dE, dI, dDE, dDI, dR, dF]
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     def run_epoch(self, runtime, dt=0.1):
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -268,9 +262,6 @@ class SEIRSModel:
         self.numF = numpy.append(self.numF, solution["y"][6])
 
         self.t = self.tseries[-1]
-
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     def run(self, T, dt=0.1, checkpoints=None, verbose=False):
 
@@ -356,9 +347,6 @@ class SEIRSModel:
 
         return True
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     def total_num_infections(self, t_idx=None):
         if t_idx is None:
             return self.numE[:] + self.numI[:] + self.numD_E[:] + self.numD_I[:]
@@ -369,9 +357,6 @@ class SEIRSModel:
                 + self.numD_E[t_idx]
                 + self.numD_I[t_idx]
             )
-
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     def plot(
         self,
@@ -882,9 +867,6 @@ class SEIRSModel:
 
         return ax
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     def figure_basic(
         self,
         plot_S="line",
@@ -971,9 +953,6 @@ class SEIRSModel:
 
         return fig, ax
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     def figure_infections(
         self,
         plot_S=False,
@@ -1059,12 +1038,6 @@ class SEIRSModel:
             pyplot.show()
 
         return fig, ax
-
-
-#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 class SEIRSNetworkModel:
@@ -1321,9 +1294,6 @@ class SEIRSNetworkModel:
                     + self.nodeGroupData[groupName]["numR"][0]
                 )
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     def update_parameters(self):
         import time
 
@@ -1535,14 +1505,8 @@ class SEIRSNetworkModel:
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         self.update_scenario_flags()
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     def node_degrees(self, Amat):
         return Amat.sum(axis=0).reshape(self.numNodes, 1)  # sums of adj matrix cols
-
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     def update_G(self, new_G):
         self.G = new_G
@@ -1560,8 +1524,6 @@ class SEIRSNetworkModel:
         self.degree = numpy.asarray(self.node_degrees(self.A)).astype(float)
 
         return
-
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     def update_Q(self, new_Q):
         self.Q = new_Q
@@ -1584,8 +1546,6 @@ class SEIRSNetworkModel:
 
         return
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     def update_scenario_flags(self):
         self.testing_scenario = (
             numpy.any(self.psi_I) and (numpy.any(self.theta_I) or numpy.any(self.phi_I))
@@ -1598,8 +1558,6 @@ class SEIRSNetworkModel:
         self.vitality_scenario = numpy.any(self.mu_0) and numpy.any(self.nu)
         self.resusceptibility_scenario = numpy.any(self.xi)
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     def total_num_infections(self, t_idx=None):
         if t_idx is None:
             return self.numE[:] + self.numI[:] + self.numD_E[:] + self.numD_I[:]
@@ -1610,9 +1568,6 @@ class SEIRSNetworkModel:
                 + self.numD_E[t_idx]
                 + self.numD_I[t_idx]
             )
-
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     def calc_propensities(self):
 
@@ -1727,9 +1682,6 @@ class SEIRSNetworkModel:
 
         return propensities, columns
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     def increase_data_series_length(self):
         self.tseries = numpy.pad(
             self.tseries, [(0, 5 * self.numNodes)], mode="constant", constant_values=0
@@ -1820,8 +1772,6 @@ class SEIRSNetworkModel:
 
         return None
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     def finalize_data_series(self):
         self.tseries = numpy.array(self.tseries, dtype=float)[: self.tidx + 1]
         self.numS = numpy.array(self.numS, dtype=float)[: self.tidx + 1]
@@ -1864,9 +1814,6 @@ class SEIRSNetworkModel:
                 )[: self.tidx + 1]
 
         return None
-
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     def run_iteration(self):
 
@@ -2023,9 +1970,6 @@ class SEIRSNetworkModel:
 
         return True
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     def run(self, T, checkpoints=None, print_interval=10, verbose="t"):
         if T > 0:
             self.tmax += T
@@ -2113,9 +2057,6 @@ class SEIRSNetworkModel:
                     print_reset = True
 
         return True
-
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     def plot(
         self,
@@ -2626,9 +2567,6 @@ class SEIRSNetworkModel:
 
         return ax
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     def figure_basic(
         self,
         plot_S="line",
@@ -2715,9 +2653,6 @@ class SEIRSNetworkModel:
 
         return fig, ax
 
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
     def figure_infections(
         self,
         plot_S=False,
@@ -2803,9 +2738,3 @@ class SEIRSNetworkModel:
             pyplot.show()
 
         return fig, ax
-
-
-#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
