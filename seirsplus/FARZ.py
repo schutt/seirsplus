@@ -1,6 +1,13 @@
-#################################################
-# Adapted from https://github.com/rabbanyk/FARZ
-#################################################
+"""
+FARZ is generator/simulator for networks with built-in community structure. It
+creates graphs/networks with community labels, which can be used for evaluating
+community detection algorithms.
+
+Adapted from https://github.com/rabbanyk/FARZ
+
+This version is an update to Python 3.x and NetworkX 2.2 from Python 2.x and
+NetworkX 1.x.
+"""
 
 import bisect
 import math
@@ -102,7 +109,7 @@ class Graph:
         if self.deg[v] > self.max_degree:
             self.max_degree = self.deg[v]
 
-        if not self.directed:  # if directed deg is indegree, outdegree = len(negh)
+        if not self.directed:
             self.neigh[v].append((u, w))
             self.deg[u] += w
             if self.deg[u] > self.max_degree:
@@ -115,21 +122,10 @@ class Graph:
 
         G = nx.Graph()
         for i in range(self.n):
-            # This line works for networkx 1.10:
-            # G.add_node(i, {'c':str(sorted(C.memberships[i]))})
-            # This line works for networkx 2.2:
             G.add_node(i, c=str(sorted(C.memberships[i])))
-            # G.add_node(i, {'c':int(C.memberships[i][0][0])})
         for i in range(len(self.edge_list)):
-            # for u,v, w in self.edge_list:
             u, v, w = self.edge_list[i]
             G.add_edge(u, v, weight=w, capacity=self.edge_time[i])
-            # G.add_edges_from(self.edge_list)
-        return G
-
-    def to_ig(self):
-        G = ig.Graph()
-        G.add_edges(self.edge_list)
         return G
 
     def write_edgelist(self, path):
@@ -170,7 +166,7 @@ def choose_community(i, G, C, alpha, beta, gamma, epsilon):
     if random.random() < beta:  # inside
         cids = mids
     else:
-        cids = [j for j in range(len(C.groups)) if j not in mids]  #:  cids.append(j)
+        cids = [j for j in range(len(C.groups)) if j not in mids]
 
     return cids[int(random.random() * len(cids))] if len(cids) > 0 else None
 
@@ -217,7 +213,7 @@ def choose_node(i, c, G, C, alpha, beta, gamma, epsilon):
 
         if sum(p) == 0:
             return None
-        tmp = random_choice(range(len(p)), p)  # , size=1, replace = False)
+        tmp = random_choice(range(len(p)), p)
         # TODO add weights /direction/attributes
         if tmp is None:
             return None
@@ -249,15 +245,15 @@ def connect(i, b, G, C, alpha, beta, gamma, epsilon):
 
 def select_node(G, method="uniform"):
     if method == "uniform":
-        return int(random.random() * G.n)  # uniform
+        return int(random.random() * G.n)
     else:
         if method == "older_less_active":
             p = [(i + 1) for i in range(G.n)]  # older less active
         elif method == "younger_less_active":
             p = [G.n - i for i in range(G.n)]  # younger less active
         else:
-            p = [1 for i in range(G.n)]  # uniform
-        return random_choice(range(len(p)), p)  # , size=1, replace = False)[0]
+            p = [1 for i in range(G.n)]
+        return random_choice(range(len(p)), p)
 
 
 def assign(i, C, e=1, r=1, q=0.5):
@@ -321,11 +317,9 @@ def realize(
     weighted=False,
     directed=False,
 ):
-    # print_setting(n,m,k,alpha,beta,gamma, phi,r,q,epsilon,weighted,directed)
     G = Graph()
     C = Comms(k)
     for i in range(n):
-        # if i%10==0: print('-- ',G.n, len(G.edge_list))
         G.add_node()
         assign(i, C, phi, r, q)
         connect(i, b, G, C, alpha, beta, gamma, epsilon)
@@ -333,40 +327,6 @@ def realize(
             j = select_node(G)
             connect(j, b, G, C, alpha, beta, gamma, epsilon)
     return G, C
-
-
-def props():
-    import matplotlib as mpl
-    import plotNets as pltn
-
-    mpl.rcParams["axes.unicode_minus"] = False
-    graphs = []
-    names = []
-    params = default_FARZ_setting.copy()
-    for alp, gam in [(0.5, 0.5), (0.8, 0.2), (0.5, -0.5), (0.2, -0.8)]:
-        params["alpha"] = alp
-        params["gamma"] = gam
-        print(str(params))
-        G, C = realize(**params)
-        print("n=", G.n, " e=", len(G.edge_list))
-        print("Q=", Q(G, C))
-        G = G.to_nx(C)
-        pltn.printGraphStats(G)
-        graphs.append(G.to_undirected())
-        # name = 'F'+str(params)
-        name = (
-            "$\\alpha ="
-            + str(params["alpha"])
-            + ",\; \\gamma="
-            + str(params["gamma"])
-            + "$"
-        )
-        names.append(name)
-        nx.write_gml(
-            graphs[-1], "farz-" + str(params["alpha"]) + str(params["gamma"]) + ".gml"
-        )
-
-    pltn.plot_dists(graphs, names)
 
 
 def write_to_file(G, C, path, name, format, params):
@@ -458,13 +418,6 @@ def generate(
                 G = G.to_undirected()
 
             name = net_name + (str(r + 1) if repeat > 1 else "")
-            # G = write_to_file(G,C,path,name,format,farz_params)
-
-            # print(len([memtup[0][0] for memtup in C.memberships.values()]))
-            # import numpy
-            # (unique, counts) = numpy.unique( [memtup[0][0] for memtup in C.memberships.values()], return_counts=True )
-            # print(numpy.asarray((unique, counts)).T)
-            # exit()
 
             node_communities = {
                 node: [c[0] for c in comm_tup]
@@ -586,8 +539,6 @@ def main(argv):
             print(
                 "-c: the range to change the given parameter, should be in format of [s,e,inc]"
             )
-            # print('default FARZ parameters are :\n', default_FARZ_setting)
-            # print('default batch generator parameters are :\n', default_batch_setting)
 
             sys.exit()
 
@@ -708,24 +659,3 @@ def main(argv):
 
 if __name__ == "__main__":
     main(sys.argv[1:])
-
-
-# generate(farz_params={"n":25000,
-#                         "k":4,
-#                         "m":5,
-#                         "alpha":0.5,
-#                         "gamma":0.5,
-#                         "beta":.8,
-#                         "phi":1,
-#                         "o":1,
-#                         'q':0.5,
-#                         "b":0.0,
-#                         "epsilon":0.0000001,
-#                         'directed':False,
-#                         'weighted':False})
-
-
-# python FARZ.py --path ./dataVb55 -s 10 -v beta
-# python FARZ.py --path ./dataVb82 -s 10 -v beta --alpha 0.8 --gamma 0.2
-# python FARZ.py --path ./dataVb5-5 -s 10 -v beta --alpha 0.5 --gamma -0.5
-# python FARZ.py --path ./dataVb2-8 -s 10 -v beta --alpha 0.2 --gamma -0.8
