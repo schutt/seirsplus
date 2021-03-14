@@ -10,9 +10,13 @@ NetworkX 1.x.
 """
 
 import bisect
+import getopt
 import math
 import os
 import random
+import sys
+
+import networkx as nx
 
 
 def random_choice(values, weights=None, size=1, replace=True):
@@ -118,7 +122,6 @@ class Graph:
         return
 
     def to_nx(self, C):
-        import networkx as nx
 
         G = nx.Graph()
         for i in range(self.n):
@@ -343,7 +346,6 @@ def write_to_file(G, C, path, name, format, params):
         format,
     )
     if format == "gml":
-        import networkx as nx
 
         G = G.to_nx(C)
         if not params["directed"]:
@@ -411,8 +413,6 @@ def generate(
         for r in range(repeat):
             G, C = realize(**farz_params)
 
-            import networkx as nx
-
             G = G.to_nx(C)
             if not farz_params["directed"]:
                 G = G.to_undirected()
@@ -439,11 +439,7 @@ def generate(
             write_to_file(G, C, path, name, format, farz_params)
 
 
-import sys
-
-
 def main(argv):
-    import getopt
 
     FARZsetting = default_FARZ_setting.copy()
     batch_setting = default_batch_setting.copy()
