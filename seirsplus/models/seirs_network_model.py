@@ -6,8 +6,10 @@ import networkx
 import numpy
 import scipy
 
+from .base_plotable_model import BasePlotableModel
 
-class SEIRSNetworkModel():
+
+class SEIRSNetworkModel(BasePlotableModel):
     """
     A class to simulate the SEIRS Stochastic Network Model
     ======================================================
@@ -49,6 +51,10 @@ class SEIRSNetworkModel():
             initQ_R         Initial number of isolated recovered individuals
                             (all remaining nodes initialized susceptible)
     """
+
+    plotting_number_property = 'numNodes'
+    """Property to access the number to base plotting on."""
+
     def __init__(self, G, beta, sigma, gamma,
                     mu_I=0, alpha=1.0, xi=0, mu_0=0, nu=0, f=0, p=0,
                     beta_local=None, beta_pairwise_mode='infected', delta=None, delta_pairwise_mode=None,
@@ -421,50 +427,50 @@ class SEIRSNetworkModel():
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     def total_num_susceptible(self, t_idx=None):
-        if (t_idx is None):
-            return (self.numS[:])
+        if t_idx is None:
+            return self.numS[:]
         else:
-            return (self.numS[t_idx])
+            return self.numS[t_idx]
 
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     def total_num_infected(self, t_idx=None):
-        if (t_idx is None):
-            return (self.numE[:] + self.numI[:] + self.numQ_E[:] + self.numQ_I[:])
+        if t_idx is None:
+            return self.numE[:] + self.numI[:] + self.numQ_E[:] + self.numQ_I[:]
         else:
-            return (self.numE[t_idx] + self.numI[t_idx] + self.numQ_E[t_idx] + self.numQ_I[t_idx])
+            return self.numE[t_idx] + self.numI[t_idx] + self.numQ_E[t_idx] + self.numQ_I[t_idx]
 
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     def total_num_isolated(self, t_idx=None):
-        if (t_idx is None):
-            return (self.numQ_E[:] + self.numQ_I[:])
+        if t_idx is None:
+            return self.numQ_E[:] + self.numQ_I[:]
         else:
-            return (self.numQ_E[t_idx] + self.numQ_I[t_idx])
+            return self.numQ_E[t_idx] + self.numQ_I[t_idx]
 
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     def total_num_tested(self, t_idx=None):
-        if (t_idx is None):
-            return (self.numTested[:])
+        if t_idx is None:
+            return self.numTested[:]
         else:
-            return (self.numTested[t_idx])
+            return self.numTested[t_idx]
 
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     def total_num_positive(self, t_idx=None):
-        if (t_idx is None):
-            return (self.numPositive[:])
+        if t_idx is None:
+            return self.numPositive[:]
         else:
-            return (self.numPositive[t_idx])
+            return self.numPositive[t_idx]
 
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     def total_num_recovered(self, t_idx=None):
-        if (t_idx is None):
-            return (self.numR[:])
+        if t_idx is None:
+            return self.numR[:]
         else:
-            return (self.numR[t_idx])
+            return self.numR[t_idx]
 
 
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -478,19 +484,19 @@ class SEIRSNetworkModel():
         #------------------------------------
 
         self.transmissionTerms_I = numpy.zeros(shape=(self.numNodes,1))
-        if (numpy.any(self.numI[self.tidx])):
+        if numpy.any(self.numI[self.tidx]):
             self.transmissionTerms_I = numpy.asarray(scipy.sparse.csr_matrix.dot(self.A_deltabeta, self.X==self.I))
 
         #------------------------------------
 
         self.transmissionTerms_Q = numpy.zeros(shape=(self.numNodes,1))
-        if (numpy.any(self.numQ_I[self.tidx])):
+        if numpy.any(self.numQ_I[self.tidx]):
             self.transmissionTerms_Q = numpy.asarray(scipy.sparse.csr_matrix.dot(self.A_Q_deltabeta_Q, self.X==self.Q_I))
 
         #------------------------------------
 
         numContacts_Q = numpy.zeros(shape=(self.numNodes,1))
-        if (numpy.any(self.positive) and (numpy.any(self.phi_E) or numpy.any(self.phi_I))):
+        if numpy.any(self.positive) and (numpy.any(self.phi_E) or numpy.any(self.phi_I)):
             numContacts_Q = numpy.asarray(scipy.sparse.csr_matrix.dot(self.A, ((self.positive)&(self.X!=self.R)&(self.X!=self.F))))
 
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -503,7 +509,7 @@ class SEIRSNetworkModel():
 
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        if (self.transition_mode == 'time_in_state'):
+        if self.transition_mode == 'time_in_state':
 
             propensities_EtoI     = 1e5 * ((self.X==self.E) & numpy.greater(self.timer_state, 1/self.sigma))
 
@@ -576,18 +582,18 @@ class SEIRSNetworkModel():
 
     def set_isolation(self, node, isolate):
         # Move this node in/out of the appropriate isolation state:
-        if (isolate == True):
-            if (self.X[node] == self.E):
+        if isolate == True:
+            if self.X[node] == self.E:
                 self.X[node] = self.Q_E
                 self.timer_state = 0
-            elif (self.X[node] == self.I):
+            elif self.X[node] == self.I:
                 self.X[node] = self.Q_I
                 self.timer_state = 0
-        elif (isolate == False):
-            if (self.X[node] == self.Q_E):
+        elif isolate == False:
+            if self.X[node] == self.Q_E:
                 self.X[node] = self.E
                 self.timer_state = 0
-            elif (self.X[node] == self.Q_I):
+            elif self.X[node] == self.Q_I:
                 self.X[node] = self.I
                 self.timer_state = 0
         # Reset the isolation timer:
@@ -609,7 +615,7 @@ class SEIRSNetworkModel():
     def introduce_exposures(self, num_new_exposures):
         exposedNodes = numpy.random.choice(range(self.numNodes), size=num_new_exposures, replace=False)
         for exposedNode in exposedNodes:
-            if (self.X[exposedNode]==self.S):
+            if self.X[exposedNode] == self.S:
                 self.X[exposedNode] = self.E
 
 
@@ -629,10 +635,10 @@ class SEIRSNetworkModel():
         self.numTested   = numpy.pad(self.numTested, [(0, 6*self.numNodes)], mode='constant', constant_values=0)
         self.numPositive = numpy.pad(self.numPositive, [(0, 6*self.numNodes)], mode='constant', constant_values=0)
 
-        if (self.store_Xseries):
+        if self.store_Xseries:
             self.Xseries = numpy.pad(self.Xseries, [(0, 6*self.numNodes), (0,0)], mode='constant', constant_values=0)
 
-        if (self.nodeGroupData):
+        if self.nodeGroupData:
             for groupName in self.nodeGroupData:
                 self.nodeGroupData[groupName]['numS']        = numpy.pad(self.nodeGroupData[groupName]['numS'], [(0, 6*self.numNodes)], mode='constant', constant_values=0)
                 self.nodeGroupData[groupName]['numE']        = numpy.pad(self.nodeGroupData[groupName]['numE'], [(0, 6*self.numNodes)], mode='constant', constant_values=0)
@@ -662,10 +668,10 @@ class SEIRSNetworkModel():
         self.numTested   = numpy.array(self.numTested, dtype=float)[:self.tidx+1]
         self.numPositive = numpy.array(self.numPositive, dtype=float)[:self.tidx+1]
 
-        if (self.store_Xseries):
+        if self.store_Xseries:
             self.Xseries = self.Xseries[:self.tidx+1, :]
 
-        if (self.nodeGroupData):
+        if self.nodeGroupData:
             for groupName in self.nodeGroupData:
                 self.nodeGroupData[groupName]['numS']        = numpy.array(self.nodeGroupData[groupName]['numS'], dtype=float)[:self.tidx+1]
                 self.nodeGroupData[groupName]['numE']        = numpy.array(self.nodeGroupData[groupName]['numE'], dtype=float)[:self.tidx+1]
@@ -685,7 +691,7 @@ class SEIRSNetworkModel():
 
     def run_iteration(self):
 
-        if (self.tidx >= len(self.tseries)-1):
+        if self.tidx >= len(self.tseries) - 1:
             # Room has run out in the timeseries storage arrays; double the size of these arrays:
             self.increase_data_series_length()
 
@@ -700,7 +706,7 @@ class SEIRSNetworkModel():
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         propensities, transitionTypes = self.calc_propensities()
 
-        if (propensities.sum() > 0):
+        if propensities.sum() > 0:
 
             #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             # Calculate alpha
@@ -731,12 +737,12 @@ class SEIRSNetworkModel():
 
             self.testedInCurrentState[transitionNode] = False
 
-            self.timer_state[transitionNode] = 0.0
+            self.timer_state = 0.0
 
             #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
             # Save information about infection events when they occur:
-            if (transitionType == 'StoE'):
+            if transitionType == 'StoE':
                 transitionNode_GNbrs  = list(self.G[transitionNode].keys())
                 transitionNode_GQNbrs = list(self.G_Q[transitionNode].keys())
                 self.infectionsLog.append({ 't':                            self.t,
@@ -791,10 +797,10 @@ class SEIRSNetworkModel():
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Store system states
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        if (self.store_Xseries):
+        if self.store_Xseries:
             self.Xseries[self.tidx,:] = self.X.T
 
-        if (self.nodeGroupData):
+        if self.nodeGroupData:
             for groupName in self.nodeGroupData:
                 self.nodeGroupData[groupName]['numS'][self.tidx]        = numpy.count_nonzero(self.nodeGroupData[groupName]['mask']*self.X==self.S)
                 self.nodeGroupData[groupName]['numE'][self.tidx]        = numpy.count_nonzero(self.nodeGroupData[groupName]['mask']*self.X==self.E)
@@ -823,7 +829,7 @@ class SEIRSNetworkModel():
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     def run(self, T, checkpoints=None, print_interval=10, verbose='t'):
-        if (T>0):
+        if T > 0:
             self.tmax += T
         else:
             return False
@@ -831,12 +837,12 @@ class SEIRSNetworkModel():
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Pre-process checkpoint values:
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        if (checkpoints):
+        if checkpoints:
             numCheckpoints = len(checkpoints['t'])
             for chkpt_param, chkpt_values in checkpoints.items():
                 assert(isinstance(chkpt_values, (list, numpy.ndarray)) and len(chkpt_values)==numCheckpoints), "Expecting a list of values with length equal to number of checkpoint times ("+str(numCheckpoints)+") for each checkpoint parameter."
             checkpointIdx  = numpy.searchsorted(checkpoints['t'], self.t) # Finds 1st index in list greater than given val
-            if (checkpointIdx >= numCheckpoints):
+            if checkpointIdx >= numCheckpoints:
                 # We are out of checkpoints, stop checking them:
                 checkpoints = None
             else:
@@ -853,19 +859,19 @@ class SEIRSNetworkModel():
 
             #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             # Handle checkpoints if applicable:
-            if (checkpoints):
-                if (self.t >= checkpointTime):
-                    if (verbose is not False):
+            if checkpoints:
+                if self.t >= checkpointTime:
+                    if verbose is not False:
                         print("[Checkpoint: Updating parameters]")
                     # A checkpoint has been reached, update param values:
                     for param in list(self.parameters.keys()):
-                        if (param in list(checkpoints.keys())):
+                        if param in list(checkpoints.keys()):
                             self.parameters.update({param: checkpoints[param][checkpointIdx]})
                     # Update parameter data structures and scenario flags:
                     self.update_parameters()
                     # Update the next checkpoint time:
                     checkpointIdx  = numpy.searchsorted(checkpoints['t'], self.t) # Finds 1st index in list greater than given val
-                    if (checkpointIdx >= numCheckpoints):
+                    if checkpointIdx >= numCheckpoints:
                         # We are out of checkpoints, stop checking them:
                         checkpoints = None
                     else:
@@ -874,11 +880,11 @@ class SEIRSNetworkModel():
 
             #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-            if (print_interval):
+            if print_interval:
                 if (print_reset and (int(self.t) % print_interval == 0)):
-                    if (verbose=="t"):
+                    if verbose == "t":
                         print("t = %.2f" % self.t)
-                    if (verbose==True):
+                    if verbose == True:
                         print("t = %.2f" % self.t)
                         print("\t S      = " + str(self.numS[self.tidx]))
                         print("\t E      = " + str(self.numE[self.tidx]))
@@ -892,245 +898,3 @@ class SEIRSNetworkModel():
                     print_reset = True
 
         return True
-
-
-#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-    def plot(self, ax=None,  plot_S='line', plot_E='line', plot_I='line',plot_R='line', plot_F='line',
-                            plot_Q_E='line', plot_Q_I='line', combine_D=True,
-                            color_S='tab:green', color_E='orange', color_I='crimson', color_R='tab:blue', color_F='black',
-                            color_Q_E='mediumorchid', color_Q_I='mediumorchid', color_reference='#E0E0E0',
-                            dashed_reference_results=None, dashed_reference_label='reference',
-                            shaded_reference_results=None, shaded_reference_label='reference',
-                            vlines=[], vline_colors=[], vline_styles=[], vline_labels=[],
-                            ylim=None, xlim=None, legend=True, title=None, side_title=None, plot_percentages=True):
-
-        import matplotlib.pyplot as pyplot
-
-        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        # Create an Axes object if None provided:
-        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        if (not ax):
-            fig, ax = pyplot.subplots()
-
-        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        # Prepare data series to be plotted:
-        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        Fseries     = self.numF/self.numNodes if plot_percentages else self.numF
-        Eseries     = self.numE/self.numNodes if plot_percentages else self.numE
-        Dseries     = (self.numQ_E+self.numQ_I)/self.numNodes if plot_percentages else (self.numQ_E+self.numQ_I)
-        Q_Eseries   = self.numQ_E/self.numNodes if plot_percentages else self.numQ_E
-        Q_Iseries   = self.numQ_I/self.numNodes if plot_percentages else self.numQ_I
-        Iseries     = self.numI/self.numNodes if plot_percentages else self.numI
-        Rseries     = self.numR/self.numNodes if plot_percentages else self.numR
-        Sseries     = self.numS/self.numNodes if plot_percentages else self.numS
-
-        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        # Draw the reference data:
-        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        if (dashed_reference_results):
-            dashedReference_tseries  = dashed_reference_results.tseries[::int(self.numNodes/100)]
-            dashedReference_IDEstack = (dashed_reference_results.numI + dashed_reference_results.numQ_I + dashed_reference_results.numQ_E + dashed_reference_results.numE)[::int(self.numNodes/100)] / (self.numNodes if plot_percentages else 1)
-            ax.plot(dashedReference_tseries, dashedReference_IDEstack, color='#E0E0E0', linestyle='--', label='$I+D+E$ ('+dashed_reference_label+')', zorder=0)
-        if (shaded_reference_results):
-            shadedReference_tseries  = shaded_reference_results.tseries
-            shadedReference_IDEstack = (shaded_reference_results.numI + shaded_reference_results.numQ_I + shaded_reference_results.numQ_E + shaded_reference_results.numE) / (self.numNodes if plot_percentages else 1)
-            ax.fill_between(shaded_reference_results.tseries, shadedReference_IDEstack, 0, color='#EFEFEF', label='$I+D+E$ ('+shaded_reference_label+')', zorder=0)
-            ax.plot(shaded_reference_results.tseries, shadedReference_IDEstack, color='#E0E0E0', zorder=1)
-
-        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        # Draw the stacked variables:
-        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        topstack = numpy.zeros_like(self.tseries)
-        if (any(Fseries) and plot_F=='stacked'):
-            ax.fill_between(numpy.ma.masked_where(Fseries<=0, self.tseries), numpy.ma.masked_where(Fseries<=0, topstack+Fseries), topstack, color=color_F, alpha=0.5, label='$F$', zorder=2)
-            ax.plot(        numpy.ma.masked_where(Fseries<=0, self.tseries), numpy.ma.masked_where(Fseries<=0, topstack+Fseries),           color=color_F, zorder=3)
-            topstack = topstack+Fseries
-        if (any(Eseries) and plot_E=='stacked'):
-            ax.fill_between(numpy.ma.masked_where(Eseries<=0, self.tseries), numpy.ma.masked_where(Eseries<=0, topstack+Eseries), topstack, color=color_E, alpha=0.5, label='$E$', zorder=2)
-            ax.plot(        numpy.ma.masked_where(Eseries<=0, self.tseries), numpy.ma.masked_where(Eseries<=0, topstack+Eseries),           color=color_E, zorder=3)
-            topstack = topstack+Eseries
-        if (combine_D and plot_Q_E=='stacked' and plot_Q_I=='stacked'):
-            ax.fill_between(numpy.ma.masked_where(Dseries<=0, self.tseries), numpy.ma.masked_where(Dseries<=0, topstack+Dseries), topstack, color=color_Q_E, alpha=0.5, label='$Q_{all}$', zorder=2)
-            ax.plot(        numpy.ma.masked_where(Dseries<=0, self.tseries), numpy.ma.masked_where(Dseries<=0, topstack+Dseries),           color=color_Q_E, zorder=3)
-            topstack = topstack+Dseries
-        else:
-            if (any(Q_Eseries) and plot_Q_E=='stacked'):
-                ax.fill_between(numpy.ma.masked_where(Q_Eseries<=0, self.tseries), numpy.ma.masked_where(Q_Eseries<=0, topstack+Q_Eseries), topstack, color=color_Q_E, alpha=0.5, label='$Q_E$', zorder=2)
-                ax.plot(        numpy.ma.masked_where(Q_Eseries<=0, self.tseries), numpy.ma.masked_where(Q_Eseries<=0, topstack+Q_Eseries),           color=color_Q_E, zorder=3)
-                topstack = topstack+Q_Eseries
-            if (any(Q_Iseries) and plot_Q_I=='stacked'):
-                ax.fill_between(numpy.ma.masked_where(Q_Iseries<=0, self.tseries), numpy.ma.masked_where(Q_Iseries<=0, topstack+Q_Iseries), topstack, color=color_Q_I, alpha=0.5, label='$Q_I$', zorder=2)
-                ax.plot(        numpy.ma.masked_where(Q_Iseries<=0, self.tseries), numpy.ma.masked_where(Q_Iseries<=0, topstack+Q_Iseries),           color=color_Q_I, zorder=3)
-                topstack = topstack+Q_Iseries
-        if (any(Iseries) and plot_I=='stacked'):
-            ax.fill_between(numpy.ma.masked_where(Iseries<=0, self.tseries), numpy.ma.masked_where(Iseries<=0, topstack+Iseries), topstack, color=color_I, alpha=0.5, label='$I$', zorder=2)
-            ax.plot(        numpy.ma.masked_where(Iseries<=0, self.tseries), numpy.ma.masked_where(Iseries<=0, topstack+Iseries),           color=color_I, zorder=3)
-            topstack = topstack+Iseries
-        if (any(Rseries) and plot_R=='stacked'):
-            ax.fill_between(numpy.ma.masked_where(Rseries<=0, self.tseries), numpy.ma.masked_where(Rseries<=0, topstack+Rseries), topstack, color=color_R, alpha=0.5, label='$R$', zorder=2)
-            ax.plot(        numpy.ma.masked_where(Rseries<=0, self.tseries), numpy.ma.masked_where(Rseries<=0, topstack+Rseries),           color=color_R, zorder=3)
-            topstack = topstack+Rseries
-        if (any(Sseries) and plot_S=='stacked'):
-            ax.fill_between(numpy.ma.masked_where(Sseries<=0, self.tseries), numpy.ma.masked_where(Sseries<=0, topstack+Sseries), topstack, color=color_S, alpha=0.5, label='$S$', zorder=2)
-            ax.plot(        numpy.ma.masked_where(Sseries<=0, self.tseries), numpy.ma.masked_where(Sseries<=0, topstack+Sseries),           color=color_S, zorder=3)
-            topstack = topstack+Sseries
-
-
-        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        # Draw the shaded variables:
-        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        if (any(Fseries) and plot_F=='shaded'):
-            ax.fill_between(numpy.ma.masked_where(Fseries<=0, self.tseries), numpy.ma.masked_where(Fseries<=0, Fseries), 0, color=color_F, alpha=0.5, label='$F$', zorder=4)
-            ax.plot(        numpy.ma.masked_where(Fseries<=0, self.tseries), numpy.ma.masked_where(Fseries<=0, Fseries),    color=color_F, zorder=5)
-        if (any(Eseries) and plot_E=='shaded'):
-            ax.fill_between(numpy.ma.masked_where(Eseries<=0, self.tseries), numpy.ma.masked_where(Eseries<=0, Eseries), 0, color=color_E, alpha=0.5, label='$E$', zorder=4)
-            ax.plot(        numpy.ma.masked_where(Eseries<=0, self.tseries), numpy.ma.masked_where(Eseries<=0, Eseries),    color=color_E, zorder=5)
-        if (combine_D and (any(Dseries) and plot_Q_E=='shaded' and plot_Q_I=='shaded')):
-            ax.fill_between(numpy.ma.masked_where(Dseries<=0, self.tseries), numpy.ma.masked_where(Dseries<=0, Dseries), 0, color=color_Q_E, alpha=0.5, label='$Q_{all}$', zorder=4)
-            ax.plot(        numpy.ma.masked_where(Dseries<=0, self.tseries), numpy.ma.masked_where(Dseries<=0, Dseries),    color=color_Q_E, zorder=5)
-        else:
-            if (any(Q_Eseries) and plot_Q_E=='shaded'):
-                ax.fill_between(numpy.ma.masked_where(Q_Eseries<=0, self.tseries), numpy.ma.masked_where(Q_Eseries<=0, Q_Eseries), 0, color=color_Q_E, alpha=0.5, label='$Q_E$', zorder=4)
-                ax.plot(        numpy.ma.masked_where(Q_Eseries<=0, self.tseries), numpy.ma.masked_where(Q_Eseries<=0, Q_Eseries),    color=color_Q_E, zorder=5)
-            if (any(Q_Iseries) and plot_Q_I=='shaded'):
-                ax.fill_between(numpy.ma.masked_where(Q_Iseries<=0, self.tseries), numpy.ma.masked_where(Q_Iseries<=0, Q_Iseries), 0, color=color_Q_I, alpha=0.5, label='$Q_I$', zorder=4)
-                ax.plot(        numpy.ma.masked_where(Q_Iseries<=0, self.tseries), numpy.ma.masked_where(Q_Iseries<=0, Q_Iseries),    color=color_Q_I, zorder=5)
-        if (any(Iseries) and plot_I=='shaded'):
-            ax.fill_between(numpy.ma.masked_where(Iseries<=0, self.tseries), numpy.ma.masked_where(Iseries<=0, Iseries), 0, color=color_I, alpha=0.5, label='$I$', zorder=4)
-            ax.plot(        numpy.ma.masked_where(Iseries<=0, self.tseries), numpy.ma.masked_where(Iseries<=0, Iseries),    color=color_I, zorder=5)
-        if (any(Sseries) and plot_S=='shaded'):
-            ax.fill_between(numpy.ma.masked_where(Sseries<=0, self.tseries), numpy.ma.masked_where(Sseries<=0, Sseries), 0, color=color_S, alpha=0.5, label='$S$', zorder=4)
-            ax.plot(        numpy.ma.masked_where(Sseries<=0, self.tseries), numpy.ma.masked_where(Sseries<=0, Sseries),    color=color_S, zorder=5)
-        if (any(Rseries) and plot_R=='shaded'):
-            ax.fill_between(numpy.ma.masked_where(Rseries<=0, self.tseries), numpy.ma.masked_where(Rseries<=0, Rseries), 0, color=color_R, alpha=0.5, label='$R$', zorder=4)
-            ax.plot(        numpy.ma.masked_where(Rseries<=0, self.tseries), numpy.ma.masked_where(Rseries<=0, Rseries),    color=color_R, zorder=5)
-
-        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        # Draw the line variables:
-        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        if (any(Fseries) and plot_F=='line'):
-            ax.plot(numpy.ma.masked_where(Fseries<=0, self.tseries), numpy.ma.masked_where(Fseries<=0, Fseries), color=color_F, label='$F$', zorder=6)
-        if (any(Eseries) and plot_E=='line'):
-            ax.plot(numpy.ma.masked_where(Eseries<=0, self.tseries), numpy.ma.masked_where(Eseries<=0, Eseries), color=color_E, label='$E$', zorder=6)
-        if (combine_D and (any(Dseries) and plot_Q_E=='line' and plot_Q_I=='line')):
-            ax.plot(numpy.ma.masked_where(Dseries<=0, self.tseries), numpy.ma.masked_where(Dseries<=0, Dseries), color=color_Q_E, label='$Q_{all}$', zorder=6)
-        else:
-            if (any(Q_Eseries) and plot_Q_E=='line'):
-                ax.plot(numpy.ma.masked_where(Q_Eseries<=0, self.tseries), numpy.ma.masked_where(Q_Eseries<=0, Q_Eseries), color=color_Q_E, label='$Q_E$', zorder=6)
-            if (any(Q_Iseries) and plot_Q_I=='line'):
-                ax.plot(numpy.ma.masked_where(Q_Iseries<=0, self.tseries), numpy.ma.masked_where(Q_Iseries<=0, Q_Iseries), color=color_Q_I, label='$Q_I$', zorder=6)
-        if (any(Iseries) and plot_I=='line'):
-            ax.plot(numpy.ma.masked_where(Iseries<=0, self.tseries), numpy.ma.masked_where(Iseries<=0, Iseries), color=color_I, label='$I$', zorder=6)
-        if (any(Sseries) and plot_S=='line'):
-            ax.plot(numpy.ma.masked_where(Sseries<=0, self.tseries), numpy.ma.masked_where(Sseries<=0, Sseries), color=color_S, label='$S$', zorder=6)
-        if (any(Rseries) and plot_R=='line'):
-            ax.plot(numpy.ma.masked_where(Rseries<=0, self.tseries), numpy.ma.masked_where(Rseries<=0, Rseries), color=color_R, label='$R$', zorder=6)
-
-        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        # Draw the vertical line annotations:
-        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        if (len(vlines)>0 and len(vline_colors)==0):
-            vline_colors = ['gray']*len(vlines)
-        if (len(vlines)>0 and len(vline_labels)==0):
-            vline_labels = [None]*len(vlines)
-        if (len(vlines)>0 and len(vline_styles)==0):
-            vline_styles = [':']*len(vlines)
-        for vline_x, vline_color, vline_style, vline_label in zip(vlines, vline_colors, vline_styles, vline_labels):
-            if (vline_x is not None):
-                ax.axvline(x=vline_x, color=vline_color, linestyle=vline_style, alpha=1, label=vline_label)
-
-        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        # Draw the plot labels:
-        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        ax.set_xlabel('days')
-        ax.set_ylabel('percent of population' if plot_percentages else 'number of individuals')
-        ax.set_xlim(0, (max(self.tseries) if not xlim else xlim))
-        ax.set_ylim(0, ylim)
-        if (plot_percentages):
-            ax.set_yticklabels(['{:,.0%}'.format(y) for y in ax.get_yticks()])
-        if (legend):
-            legend_handles, legend_labels = ax.get_legend_handles_labels()
-            ax.legend(legend_handles[::-1], legend_labels[::-1], loc='upper right', facecolor='white', edgecolor='none', framealpha=0.9, prop={'size': 8})
-        if (title):
-            ax.set_title(title, size=12)
-        if (side_title):
-            ax.annotate(side_title, (0, 0.5), xytext=(-45, 0), ha='right', va='center',
-                size=12, rotation=90, xycoords='axes fraction', textcoords='offset points')
-
-        return ax
-
-
-#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-    def figure_basic(self, plot_S='line', plot_E='line', plot_I='line',plot_R='line', plot_F='line',
-                        plot_Q_E='line', plot_Q_I='line', combine_D=True,
-                        color_S='tab:green', color_E='orange', color_I='crimson', color_R='tab:blue', color_F='black',
-                        color_Q_E='mediumorchid', color_Q_I='mediumorchid', color_reference='#E0E0E0',
-                        dashed_reference_results=None, dashed_reference_label='reference',
-                        shaded_reference_results=None, shaded_reference_label='reference',
-                        vlines=[], vline_colors=[], vline_styles=[], vline_labels=[],
-                        ylim=None, xlim=None, legend=True, title=None, side_title=None, plot_percentages=True,
-                        figsize=(12,8), use_seaborn=True, show=True):
-
-        import matplotlib.pyplot as pyplot
-
-        fig, ax = pyplot.subplots(figsize=figsize)
-
-        if (use_seaborn):
-            import seaborn
-            seaborn.set_style('ticks')
-            seaborn.despine()
-
-        self.plot(ax=ax, plot_S=plot_S, plot_E=plot_E, plot_I=plot_I,plot_R=plot_R, plot_F=plot_F,
-                        plot_Q_E=plot_Q_E, plot_Q_I=plot_Q_I, combine_D=combine_D,
-                        color_S=color_S, color_E=color_E, color_I=color_I, color_R=color_R, color_F=color_F,
-                        color_Q_E=color_Q_E, color_Q_I=color_Q_I, color_reference=color_reference,
-                        dashed_reference_results=dashed_reference_results, dashed_reference_label=dashed_reference_label,
-                        shaded_reference_results=shaded_reference_results, shaded_reference_label=shaded_reference_label,
-                        vlines=vlines, vline_colors=vline_colors, vline_styles=vline_styles, vline_labels=vline_labels,
-                        ylim=ylim, xlim=xlim, legend=legend, title=title, side_title=side_title, plot_percentages=plot_percentages)
-
-        if (show):
-            pyplot.show()
-
-        return fig, ax
-
-
-#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-    def figure_infections(self, plot_S=False, plot_E='stacked', plot_I='stacked',plot_R=False, plot_F=False,
-                            plot_Q_E='stacked', plot_Q_I='stacked', combine_D=True,
-                            color_S='tab:green', color_E='orange', color_I='crimson', color_R='tab:blue', color_F='black',
-                            color_Q_E='mediumorchid', color_Q_I='mediumorchid', color_reference='#E0E0E0',
-                            dashed_reference_results=None, dashed_reference_label='reference',
-                            shaded_reference_results=None, shaded_reference_label='reference',
-                            vlines=[], vline_colors=[], vline_styles=[], vline_labels=[],
-                            ylim=None, xlim=None, legend=True, title=None, side_title=None, plot_percentages=True,
-                            figsize=(12,8), use_seaborn=True, show=True):
-
-        import matplotlib.pyplot as pyplot
-
-        fig, ax = pyplot.subplots(figsize=figsize)
-
-        if (use_seaborn):
-            import seaborn
-            seaborn.set_style('ticks')
-            seaborn.despine()
-
-        self.plot(ax=ax, plot_S=plot_S, plot_E=plot_E, plot_I=plot_I,plot_R=plot_R, plot_F=plot_F,
-                        plot_Q_E=plot_Q_E, plot_Q_I=plot_Q_I, combine_D=combine_D,
-                        color_S=color_S, color_E=color_E, color_I=color_I, color_R=color_R, color_F=color_F,
-                        color_Q_E=color_Q_E, color_Q_I=color_Q_I, color_reference=color_reference,
-                        dashed_reference_results=dashed_reference_results, dashed_reference_label=dashed_reference_label,
-                        shaded_reference_results=shaded_reference_results, shaded_reference_label=shaded_reference_label,
-                        vlines=vlines, vline_colors=vline_colors, vline_styles=vline_styles, vline_labels=vline_labels,
-                        ylim=ylim, xlim=xlim, legend=legend, title=title, side_title=side_title, plot_percentages=plot_percentages)
-
-        if (show):
-            pyplot.show()
-
-        return fig, ax
